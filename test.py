@@ -1,5 +1,5 @@
 
-from cvCreator import *
+from cvcreator import *
 from datetime import date
 
 l = Link('http://google.com/', 'Google')
