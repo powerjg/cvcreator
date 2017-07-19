@@ -94,7 +94,7 @@ class BaseItem(object):
             t = span('Invited', cls = 'invited')
         else:
             t = ''
-        return div(h3(a(t, self.title, href=self.url)), cls = 'item-title')
+        return div(h3(t, self.title), cls = 'item-title')
 
     def formatDate(self):
         if not self.date: return ''
@@ -102,7 +102,10 @@ class BaseItem(object):
 
     def formatLocation(self):
         if not self.location: return ''
-        return div(self.location, cls = 'item-location')
+        if type(self.location) == str:
+            return div(self.location, cls = 'item-location')
+        else:
+            return div(self.location.format(), cls = 'item-location')
 
     def formatLinks(self):
         if not self.other_links: return ''
@@ -133,6 +136,14 @@ class BaseItem(object):
 
 class PublicationItem(BaseItem):
 
+    def formatTitle(self):
+        if not self.title: return ''
+        if self.isInvited:
+            t = span('Invited ', cls = 'invited')
+        else:
+            t = ''
+        return div(h3(a(t, self.title, href=self.url)), cls = 'item-title')
+
     def format(self):
         tmp = div(cls = self.__class__.__name__)
         tmp.add(self.formatTitle())
@@ -148,10 +159,23 @@ class PresenationItem(BaseItem):
     def formatTitle(self):
         if not self.title: return ''
         if self.isInvited:
-            t = span('Invited talk', cls='invited')
+            t = span('Invited ', cls = 'invited')
         else:
             t = ''
-        return div(h2(t, self.title), cls='title')
+        if self.url:
+            return div(h3(a(t, self.title, href=self.url)), cls = 'item-title')
+        else:
+            return div(h3(t, self.title), cls = 'item-title')
+
+    def format(self):
+        tmp = div(cls = self.__class__.__name__)
+        tmp.add(self.formatTitle())
+        tmp.add(self.formatAuthors())
+        tmp.add(self.formatLocation())
+        tmp.add(self.formatDate())
+        tmp.add(self.formatDetails())
+        tmp.add(self.formatLinks())
+        return tmp
 
 class TeachingItem(BaseItem):
     pass
